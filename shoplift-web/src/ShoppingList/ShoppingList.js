@@ -9,29 +9,17 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import './ShoppingList.css';
+import PubSub from 'pubsub-js';
+import withEvents from "../EventBus/withEvents";
+import PropTypes from 'prop-types';
 
-/*const useStyles = makeStyles(theme => ({
-    root: {
-        flexGrow: 1,
-    },
-    demo: {
-        backgroundColor: theme.palette.background.paper
-    },
-    title: {
-        margin: theme.spacing(4, 0, 2)
-    },
-    input: {
-        height: 50
-    }
-
-}));*/
 
 class ShoppingList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             newItem: undefined,
-            items: []
+            items:[]
         };
         this.handleChange = this.handleChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
@@ -39,23 +27,25 @@ class ShoppingList extends React.Component {
     }
 
     handleChange(e) {
-        console.log(`change`);
         this.setState({newItem: e.target.value});
     }
 
     onSubmit() {
-        console.log(`submit`);
         if (this.state.newItem) {
             this.state.items.push(this.state.newItem);
             this.setState({
                               newItem: undefined
                           })
         }
+        this.props.EventBus.dispatchEvent(new CustomEvent("GIVE_ITEMS", {
+            detail: {items: this.state.items}
+        }));
+        //PubSub.publish('GIVE_ITEMS', this.state.items);
     }
 
     onDelete(value) {
-        console.log(`delete`);
-        //this.state.items.splice(this.state.items.indexOf(value),1);
+        this.state.items.splice(this.state.items.indexOf(value),1);
+        //PubSub.publish('GIVE_ITEMS', this.state.items);
     }
 
     render() {
@@ -75,12 +65,12 @@ class ShoppingList extends React.Component {
                 </Typography>
                 <List className="list">
                     {this.state.items.map(value => (
-                        <ListItem className="listRow">
+                        <ListItem className="listRow" key={value}>
                             <ListItemText primary={value}/>
                             <ListItemSecondaryAction>
-                                <div key={value}>
+                                <div>
                                     <IconButton edge="end" aria-label="delete"
-                                                onClick={this.onDelete(value)}>
+                                                onClick={value => this.onDelete(value)}>
                                         <DeleteIcon/>
                                     </IconButton>
                                 </div>
@@ -94,38 +84,8 @@ class ShoppingList extends React.Component {
 
 }
 
-export default ShoppingList;
+ShoppingList.propTypes = {
+    EventBus: PropTypes.object
+}
 
-/*export default function ShoppingList() {
-    const classes = useStyles();
-    return (
-        <div className={classes.root}>
-            <form className={classes.form} noValidate autoComplete="off">
-                <TextField className={classes.input} id="standard-basic" label="Enter your item">
-                    <input id="my-input" aria-describedby="my-helper-text"/>
-                    <label htmlFor="my-input">Enter your item</label>
-                </TextField>
-                <Button className={classes.input} variant="contained" color="primary" type="submit" onClick={(data) =>
-                    console.log("hi")}>
-                    Add to list
-                </Button>
-            </form>
-            <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                    <Typography variant="h6" className={classes.title}>
-                        Shopping List
-                    </Typography>
-                    <div className={classes.demo}>
-                        <List>
-                            <ListItem>
-                                <ListItemText
-                                    primary="Single-line item"
-                                />
-                            </ListItem>
-                        </List>
-                    </div>
-                </Grid>
-            </Grid>
-        </div>
-    );
-}*/
+export default withEvents(ShoppingList);

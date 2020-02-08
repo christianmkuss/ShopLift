@@ -1,5 +1,4 @@
 import React from 'react';
-import {combineReducers, createStore} from 'redux';
 import './App.css';
 import './ShoppingList/ShoppingList.js';
 import ShoppingList from "./ShoppingList/ShoppingList";
@@ -17,22 +16,10 @@ import VideoLabelIcon from '@material-ui/icons/VideoLabel';
 import StepConnector from '@material-ui/core/StepConnector';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import PubSub from 'pubsub-js';
+import EventProvider from "./EventBus/EventProvider";
 
 function App() {
-    const reducer = combineReducers({
-        items: () => {
-            return ['apple', 'banana']
-        }
-    });
-
-    const store = createStore(reducer);
-
-    Window.store = store;
-
-    const editItems = items => ({
-        type: "EDIT_ITEMS",
-        items
-    })
 
     const QontoConnector = withStyles({
                                           alternativeLabel: {
@@ -169,13 +156,15 @@ function App() {
     }
 
     function getStepContent(step) {
+        const shoppingList = <ShoppingList className={classes.page} />;
+        const replacementList = <ReplacementList className={classes.page} />;
         switch (step) {
             case 0:
                 return <p className={classes.page}>'Welcome Page'</p>;
             case 1:
-                return <ShoppingList className={classes.page} items/>;
+                return shoppingList;
             case 2:
-                return ReplacementList(["apples", "bananas", "carrots"]);
+                return replacementList;
             default:
                 return 'Unknown step';
         }
@@ -200,42 +189,44 @@ function App() {
 
     return (
         <div className="App">
-            <Stepper alternativeLabel activeStep={activeStep} connector={<QontoConnector />}>
-                {steps.map(label => (
-                    <Step key={label}>
-                        <StepLabel StepIconComponent={QontoStepIcon}>{label}</StepLabel>
-                    </Step>
-                ))}
-            </Stepper>
-            <div>
-                {activeStep === steps.length ? (
-                    <div>
-                        <Typography className={classes.instructions}>
-                            All steps completed - you&apos;re finished
-                        </Typography>
-                        <Button onClick={handleReset} className={classes.button}>
-                            Reset
-                        </Button>
-                    </div>
-                ) : (
-                     <div>
-                         <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
+            <EventProvider>
+                <Stepper alternativeLabel activeStep={activeStep} connector={<QontoConnector />}>
+                    {steps.map(label => (
+                        <Step key={label}>
+                            <StepLabel StepIconComponent={QontoStepIcon}>{label}</StepLabel>
+                        </Step>
+                    ))}
+                </Stepper>
+                <div>
+                    {activeStep === steps.length ? (
+                        <div>
+                            <Typography className={classes.instructions}>
+                                All steps completed - you&apos;re finished
+                            </Typography>
+                            <Button onClick={handleReset} className={classes.button}>
+                                Reset
+                            </Button>
+                        </div>
+                    ) : (
                          <div>
-                             <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
-                                 Back
-                             </Button>
-                             <Button
-                                 variant="contained"
-                                 color="primary"
-                                 onClick={handleNext}
-                                 className={classes.button}
-                             >
-                                 {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                             </Button>
+                             <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
+                             <div>
+                                 <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
+                                     Back
+                                 </Button>
+                                 <Button
+                                     variant="contained"
+                                     color="primary"
+                                     onClick={handleNext}
+                                     className={classes.button}
+                                 >
+                                     {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                                 </Button>
+                             </div>
                          </div>
-                     </div>
-                 )}
-            </div>
+                     )}
+                </div>
+            </EventProvider>
         </div>
     );
 }
