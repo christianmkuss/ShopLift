@@ -1,15 +1,33 @@
-
 .root {
     flexGrow: 1;
+    padding-top: 20px;
 }
 
-.demo {
+.list {
     backgroundColor: white;
+    max-width: calc(100% - 200px);
+    min-width: 600px;
+    display: inline-block;
+    word-wrap: break-word;
 }
 
 .title {
+    padding-top: 20px;
     margin: 10px;
 }
 .input {
+    width: 600px;
     height: 50px;
+    padding-bottom: 20px;
+}
+
+.inputButton {
+    margin-left: 10px;
+    height: 40px;
+    width: 125px;
+}
+
+.wholelist {
+    margin-left: auto;
+    margin-right: auto;
 }
