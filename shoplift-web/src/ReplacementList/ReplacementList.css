@@ -1,0 +1,5 @@
+.replacementList {
+    min-width: 600px;
+    max-width: calc(100% - 200px);
+    display: inline-block;
+}
