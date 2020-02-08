@@ -1,9 +1,25 @@
 import flask
 from flask import request, jsonify
 import requests as rq
+import boto3
+import simplejson as json
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
+
+
+class DynamoDB:
+
+    def __init__(self):
+        self.dynamodb = boto3.resource('dynamodb', region_name='us-east-1',
+                                       endpoint_url="https://dynamodb.us-east-1.amazonaws.com")
+        self.table = self.dynamodb.Table('shopLift')
+
+    def getRow(self, productName):
+        response = self.table.get_item(
+            Key={'product_name': productName}
+        )
+        return response
 
 
 @app.route('/ping', methods=['GET'])
@@ -53,11 +69,11 @@ def get_alternatives():
             item = request.args['item']
         else:
             return jsonify(error="Could not find item in Query parameters")
-        # do something with with the database
-        return 1
-    except:
+        db = DynamoDB()
+        result = db.getRow(item)
+        return json.loads(json.dumps(result))
+    except Exception as err:
         return jsonify(error="Error parsing request item")
 
 
 app.run()
-
