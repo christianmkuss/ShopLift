@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Provider } from "./EventContext";
-import EventTarget from "./EventTarget";
+import {one as EventTarget} from "./EventTarget";
 
 class EventProvider extends Component {
     render() {
         const { children } = this.props;
-        const eventTarget = EventTarget();
+        const eventTarget = EventTarget;
         return <Provider value={eventTarget}>{children}</Provider>;
     }
 }

@@ -3,6 +3,7 @@ import './App.css';
 import './ShoppingList/ShoppingList.js';
 import ShoppingList from "./ShoppingList/ShoppingList";
 import ReplacementList from "./ReplacementList/ReplacementList";
+import Welcome from "./Welcome/Welcome";
 import PropTypes from 'prop-types';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -16,7 +17,6 @@ import VideoLabelIcon from '@material-ui/icons/VideoLabel';
 import StepConnector from '@material-ui/core/StepConnector';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import PubSub from 'pubsub-js';
 import EventProvider from "./EventBus/EventProvider";
 
 function App() {
@@ -209,7 +209,11 @@ function App() {
                         </div>
                     ) : (
                          <div>
-                             <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
+                             <Typography className={classes.instructions}>
+                                 <Welcome className={classes.page} isVisible={activeStep === 0} />
+                                 <ReplacementList className={classes.page} isVisible={activeStep === 2} />
+                                 <ShoppingList className={classes.page} isVisible={activeStep === 1} />
+                             </Typography>
                              <div>
                                  <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
                                      Back

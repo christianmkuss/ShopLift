@@ -5,7 +5,6 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import './ReplacementList.css';
-import PubSub from 'pubsub-js';
 import PropTypes from 'prop-types';
 import withEvents from "../EventBus/withEvents";
 
@@ -15,7 +14,7 @@ class ReplacementList extends React.Component {
         this.state = {
             items: []
         }
-
+        console.log("making event listeners");
         this.props.EventBus.addEventListener("GIVE_ITEMS", event => {
             this.setState({ items: event.detail.items });
             console.log("listened");
@@ -27,26 +26,30 @@ class ReplacementList extends React.Component {
     }
 
     render() {
-        return (
-            <div className="root replacementList">
-                {this.state.items.map(value => (
-                    <ExpansionPanel>
-                        <ExpansionPanelSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel1a-content"
-                            id="panel1a-header"
-                        >
-                            <Typography className="heading">{value}</Typography>
-                        </ExpansionPanelSummary>
-                        <ExpansionPanelDetails>
-                            <Typography>
-                                stuff
-                            </Typography>
-                        </ExpansionPanelDetails>
-                    </ExpansionPanel>
-                ))}
-            </div>
-        );
+        if (this.props.isVisible) {
+            return (
+                <div className="root replacementList">
+                    {this.state.items.map(value => (
+                        <ExpansionPanel>
+                            <ExpansionPanelSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="panel1a-content"
+                                id="panel1a-header"
+                            >
+                                <Typography className="heading">{value}</Typography>
+                            </ExpansionPanelSummary>
+                            <ExpansionPanelDetails>
+                                <Typography>
+                                    stuff
+                                </Typography>
+                            </ExpansionPanelDetails>
+                        </ExpansionPanel>
+                    ))}
+                </div>
+            );
+        } else {
+            return null;
+        }
     }
 }
 

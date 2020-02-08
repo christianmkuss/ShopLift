@@ -9,16 +9,14 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import './ShoppingList.css';
-import PubSub from 'pubsub-js';
 import withEvents from "../EventBus/withEvents";
 import PropTypes from 'prop-types';
-
 
 class ShoppingList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            newItem: undefined,
+            newItem: "",
             items:[]
         };
         this.handleChange = this.handleChange.bind(this);
@@ -26,60 +24,65 @@ class ShoppingList extends React.Component {
         this.onDelete = this.onDelete.bind(this);
     }
 
-    handleChange(e) {
-        this.setState({newItem: e.target.value});
+    async handleChange(e) {
+        await this.setState({newItem: e.target.value});
     }
 
-    onSubmit() {
-        if (this.state.newItem) {
-            this.state.items.push(this.state.newItem);
-            this.setState({
-                              newItem: undefined
-                          })
-        }
-        this.props.EventBus.dispatchEvent(new CustomEvent("GIVE_ITEMS", {
-            detail: {items: this.state.items}
-        }));
-        //PubSub.publish('GIVE_ITEMS', this.state.items);
+    async onSubmit() {
+        await this.setState({
+                              items: [... this.state.items, this.state.newItem]
+                          });
+        this.props.EventBus.dispatchEvent(new CustomEvent("GIVE_ITEMS",
+                                                          {detail: {items: this.state.items}}));
     }
 
-    onDelete(value) {
-        this.state.items.splice(this.state.items.indexOf(value),1);
-        //PubSub.publish('GIVE_ITEMS', this.state.items);
+    async onDelete(value) {
+        const copy = [... this.state.items];
+        copy.splice(this.state.items.indexOf(value),1);
+        await this.setState({
+                          items: copy
+                      });
+        this.props.EventBus.dispatchEvent(new CustomEvent("GIVE_ITEMS",
+                                                          {detail: {items: this.state.items}}));
     }
 
     render() {
-        return (
-            <div className="root">
-                <span value={this.state.newItem} onChange={this.handleChange}>
-                    <TextField className="input" id="standard-basic" label="Enter your item">
-                        <input id="my-input" aria-describedby="my-helper-text"/>
-                        <label htmlFor="my-input">Enter your item</label>
-                    </TextField>
-                </span>
-                <Button className="input inputButton" variant="contained" color="primary" type="button" onClick={this.onSubmit}>
-                    Add to list
-                </Button>
-                <Typography variant="h6" className="title">
-                    Shopping List
-                </Typography>
-                <List className="list">
-                    {this.state.items.map(value => (
-                        <ListItem className="listRow" key={value}>
-                            <ListItemText primary={value}/>
-                            <ListItemSecondaryAction>
-                                <div>
-                                    <IconButton edge="end" aria-label="delete"
-                                                onClick={value => this.onDelete(value)}>
-                                        <DeleteIcon/>
-                                    </IconButton>
-                                </div>
-                            </ListItemSecondaryAction>
-                        </ListItem>
-                    ))}
-                </List>
-            </div>
-        );
+        if (this.props.isVisible) {
+            return (
+                <div className="root">
+                    <span value={this.state.newItem} onChange={this.handleChange}>
+                        <TextField className="input" id="standard-basic" label="Enter your item">
+                            <input id="my-input" aria-describedby="my-helper-text"/>
+                            <label htmlFor="my-input">Enter your item</label>
+                        </TextField>
+                    </span>
+                    <Button className="input inputButton" variant="contained" color="primary" type="button" onClick={this.onSubmit}>
+                        Add to list
+                    </Button>
+                    <Typography variant="h6" className="title">
+                        Shopping List
+                    </Typography>
+                    <List className="list">
+                        {this.state.items.map(value => (
+                            <ListItem className="listRow" key={value}>
+                                <ListItemText primary={value}/>
+                                <ListItemSecondaryAction>
+                                    <div>
+                                        <IconButton edge="end" aria-label="delete"
+                                                    onClick={() => this.onDelete(value)}>
+                                            <DeleteIcon/>
+                                        </IconButton>
+                                    </div>
+                                </ListItemSecondaryAction>
+                            </ListItem>
+                        ))}
+                    </List>
+                </div>
+            );
+        } else {
+            return null;
+        }
+
     }
 
 }
