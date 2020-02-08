@@ -1,0 +1,15 @@
+
+.root {
+    flexGrow: 1;
+}
+
+.demo {
+    backgroundColor: white;
+}
+
+.title {
+    margin: 10px;
+}
+.input {
+    height: 50px;
+}
