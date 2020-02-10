@@ -1,14 +1,17 @@
 import React from 'react';
+import './Welcome.css';
 
 class Welcome extends React.Component {
-    constructor(props) {
-        super(props);
-    }
     render() {
         if (this.props.isVisible) {
             return (
                 <div>
-                    <p>Welcome to ShopLift!</p>
+                    <img src="ShopLiftTextLogo.png" alt="ShopLiftText"/>
+                    <h3>Welcome to ShopLift!</h3>
+                    <p>We're committed to helping you making smarter, sustainable food purchases!
+                        <br/>
+                        Let's get started!
+                    </p>
                 </div>
                 );
         } else {

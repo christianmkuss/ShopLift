@@ -65,6 +65,9 @@ function App() {
                                                       zIndex: 1,
                                                       fontSize: 18,
                                                   },
+                                                  button: {
+                                                      color: '#784af4'
+                                                  }
                                               });
 
     function QontoStepIcon(props) {
@@ -155,21 +158,6 @@ function App() {
         return ['Welcome!', 'Make your grocery list!', 'Shop Lift!'];
     }
 
-    function getStepContent(step) {
-        const shoppingList = <ShoppingList className={classes.page} />;
-        const replacementList = <ReplacementList className={classes.page} />;
-        switch (step) {
-            case 0:
-                return <p className={classes.page}>'Welcome Page'</p>;
-            case 1:
-                return shoppingList;
-            case 2:
-                return replacementList;
-            default:
-                return 'Unknown step';
-        }
-    }
-
     const classes = useStyles();
     const [activeStep, setActiveStep] = React.useState(0);
 
@@ -189,6 +177,7 @@ function App() {
 
     return (
         <div className="App">
+            <img className="dude" src="favicon.ico" alt="ShopLiftDude"/>
             <EventProvider>
                 <Stepper alternativeLabel activeStep={activeStep} connector={<QontoConnector />}>
                     {steps.map(label => (
@@ -209,18 +198,17 @@ function App() {
                         </div>
                     ) : (
                          <div>
-                             <Typography className={classes.instructions}>
+                             <div className={classes.instructions}>
                                  <Welcome className={classes.page} isVisible={activeStep === 0} />
                                  <ReplacementList className={classes.page} isVisible={activeStep === 2} />
                                  <ShoppingList className={classes.page} isVisible={activeStep === 1} />
-                             </Typography>
+                             </div>
                              <div>
                                  <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
                                      Back
                                  </Button>
                                  <Button
                                      variant="contained"
-                                     color="primary"
                                      onClick={handleNext}
                                      className={classes.button}
                                  >

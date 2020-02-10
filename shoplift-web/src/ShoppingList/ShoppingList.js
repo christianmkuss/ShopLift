@@ -29,19 +29,15 @@ class ShoppingList extends React.Component {
     }
 
     async onSubmit() {
-        await this.setState({
-                              items: [... this.state.items, this.state.newItem]
-                          });
+        await this.setState({ items: [...this.state.items, this.state.newItem]});
         this.props.EventBus.dispatchEvent(new CustomEvent("GIVE_ITEMS",
                                                           {detail: {items: this.state.items}}));
     }
 
     async onDelete(value) {
-        const copy = [... this.state.items];
+        const copy = [...this.state.items];
         copy.splice(this.state.items.indexOf(value),1);
-        await this.setState({
-                          items: copy
-                      });
+        await this.setState({ items: copy });
         this.props.EventBus.dispatchEvent(new CustomEvent("GIVE_ITEMS",
                                                           {detail: {items: this.state.items}}));
     }
@@ -50,6 +46,8 @@ class ShoppingList extends React.Component {
         if (this.props.isVisible) {
             return (
                 <div className="root">
+                    <h3>Let's start selecting your groceries</h3>
+                    <p className="paragraph">Add food items you plan on purchasing, and when you're done, we'll find some more sustainable alternatives</p>
                     <span value={this.state.newItem} onChange={this.handleChange}>
                         <TextField className="input" id="standard-basic" label="Enter your item">
                             <input id="my-input" aria-describedby="my-helper-text"/>

@@ -4,12 +4,10 @@ const createEventTarget = () => {
     }
     EventTarget.prototype = {
         addEventListener: function(type, callback) {
-            console.log('Adding event' + type);
             if (!(type in this.listeners)) {
                 this.listeners[type] = [];
             }
             this.listeners[type].push(callback);
-            console.log(this.listeners);
         },
         removeEventListener: function(type, callback) {
             if (!(type in this.listeners)) {
@@ -24,7 +22,6 @@ const createEventTarget = () => {
             }
         },
         dispatchEvent: function(event) {
-            console.log(this.listeners);
             if (!(event.type in this.listeners)) {
                 return true;
             }

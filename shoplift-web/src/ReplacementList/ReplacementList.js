@@ -14,21 +14,17 @@ class ReplacementList extends React.Component {
         this.state = {
             items: []
         }
-        console.log("making event listeners");
         this.props.EventBus.addEventListener("GIVE_ITEMS", event => {
             this.setState({ items: event.detail.items });
-            console.log("listened");
         })
-        /*PubSub.subscribe('GIVE_ITEMS', (msg, data) => {
-            console.log(`got message: ${data}`);
-            this.setState({ items: data })
-        });*/
     }
 
     render() {
         if (this.props.isVisible) {
             return (
                 <div className="root replacementList">
+                    <h3>It's time to ShopLift!</h3>
+                    <p>Click the dropdown menus to view potential, more sustainable food swaps!</p>
                     {this.state.items.map(value => (
                         <ExpansionPanel>
                             <ExpansionPanelSummary
